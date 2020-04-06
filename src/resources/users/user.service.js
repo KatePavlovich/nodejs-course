@@ -1,23 +1,10 @@
 const usersRepo = require('./user.memory.repository');
 
 const getAll = () => usersRepo.getAll();
-
-const getUser = async id => {
-  const users = await getAll();
-  const [userById] = users.filter(user => {
-    if (user.id === id) {
-      return removePassword(user);
-    }
-  });
-  return userById;
-};
-
-const createUser = async ({ name, login }) => {
-  const users = await getAll();
-  const id = '5';
-  return users.push({ id, name, login });
-};
-
+const createUser = user => usersRepo.createUser(user);
+const getUser = id => usersRepo.getUser(id);
+const updateUser = (userId, updatedUser) =>
+  usersRepo.updateUser(userId, updatedUser);
 const deleteUser = async id => {
   const users = await getAll();
   const newUsers = users.filter(user => user.id !== id);
@@ -30,4 +17,11 @@ const removePassword = user => {
   return newUser;
 };
 
-module.exports = { getAll, removePassword, getUser, deleteUser, createUser };
+module.exports = {
+  getAll,
+  createUser,
+  removePassword,
+  getUser,
+  deleteUser,
+  updateUser
+};
