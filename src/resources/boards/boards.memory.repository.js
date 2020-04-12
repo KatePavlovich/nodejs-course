@@ -1,29 +1,6 @@
 const Board = require('./boards.model');
 
-const boards = [
-  {
-    id: '1',
-    title: 'string',
-    columns: [
-      {
-        id: 'string',
-        title: 'string',
-        order: 0
-      }
-    ]
-  },
-  {
-    id: '2',
-    title: 'string1',
-    columns: [
-      {
-        id: 'string2',
-        title: 'string2',
-        order: 0
-      }
-    ]
-  }
-];
+let boards = [];
 
 const getAll = async () => {
   return boards;
@@ -49,8 +26,9 @@ const updateBoard = async (id, board) => {
   return boardToUpdate;
 };
 
-const deleteBoard = async id => {
-  return boards.filter(({ id: boardId }) => id !== boardId);
+const deleteBoard = async boardId => {
+  boards = boards.filter(board => board.boardId !== boardId);
+  console.log('MEMORY', boardId, boards);
 };
 
 module.exports = { getAll, createBoard, getBoard, updateBoard, deleteBoard };

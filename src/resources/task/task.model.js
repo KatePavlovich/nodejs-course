@@ -6,8 +6,8 @@ class Task {
     title = 'task test title',
     order = 1,
     description = 'task description',
-    userId = null,
-    boardId = null,
+    userId = uuid(),
+    boardId = uuid(),
     columnId = 1
   } = {}) {
     this.id = id;

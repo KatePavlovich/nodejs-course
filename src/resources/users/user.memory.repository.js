@@ -1,6 +1,6 @@
 const User = require('./user.model');
 
-const users = [
+let users = [
   {
     id: '1',
     name: 'string',
@@ -19,27 +19,25 @@ const getAll = async () => {
   return users;
 };
 
-const createUser = async user => {
-  const newUser = await new User({
-    name: user.name,
-    login: user.login,
-    password: user.password
-  });
+const createUser = async ({ name, login, password }) => {
+  const newUser = await new User({ name, login, password });
   users.push(newUser);
   return newUser;
 };
 
-const getUser = async id => {
-  const [userById] = await users.filter(user => user.id === id);
-  return userById;
+const getUserById = id => {
+  return users.find(userToFind => userToFind.id === id);
 };
 
-const updateUser = async (userId, updatedUser) => {
-  const [userToUpdate] = await users.filter(({ id }) => id === userId);
-  userToUpdate.name = updatedUser.name;
-  userToUpdate.login = updatedUser.login;
-  userToUpdate.password = updatedUser.password;
-  return userToUpdate;
+const updateUser = (id, body) => {
+  const index = users.findIndex(user => user.id === id);
+  users[index] = { ...users[index], ...body };
+  return users[index];
 };
 
-module.exports = { getAll, createUser, getUser, updateUser };
+const deleteUser = async userId => {
+  users = users.filter(user => user.id !== userId);
+  return users;
+};
+
+module.exports = { getAll, createUser, getUserById, updateUser, deleteUser };
