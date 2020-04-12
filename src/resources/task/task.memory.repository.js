@@ -1,52 +1,61 @@
-let tasks = [];
+const Task = require('./task.model');
 
-// const getAllTasks = async () => {
-//   return tasks;
-// };
+const tasks = [];
 
-const getAll = async id => {
-  const selectedTasks = await tasks.filter(task => task.boardId === id);
-  if (selectedTasks) {
-    return selectedTasks;
-  }
+const getAllTasksOnBoard = async boardId => {
+  return tasks.filter(task => task.boardId === boardId);
 };
 
-const createTask = async (id, task) => {
-  const createdTask = { ...task, boardId: id };
-  tasks.push(createdTask);
-  return createdTask;
+const getTaskById = async (boardId, taskId) => {
+  const tasksOnBoard = await getAllTasksOnBoard(boardId);
+  const task = tasksOnBoard.find(searchTask => searchTask.id === taskId);
+  return task;
 };
 
-const getTask = async (boardId, id) => {
-  const [searchedTask] = await tasks.filter(
-    task => task.id === id && task.boardId === boardId
-  );
-  return searchedTask;
+const createTask = async (boardId, body) => {
+  const newTask = new Task({
+    ...body,
+    boardId
+  });
+  tasks.push(newTask);
+  return newTask;
 };
 
-const updateTask = async ({ id, boardId, task }) => {
-  tasks = tasks.map(taskToUpdate => {
-    if (taskToUpdate.id === id && taskToUpdate.boardId === boardId) {
-      return { ...taskToUpdate, ...task };
-    }
-    return taskToUpdate;
+const updateTask = async ({ taskId, boardId, taskBody }) => {
+  let taskToUpdate = await getTaskById(boardId, taskId);
+  taskToUpdate = { ...taskToUpdate, ...taskBody };
+  const index = tasks.indexOf(taskToUpdate);
+  tasks.splice(index, 1, taskToUpdate);
+  return taskToUpdate;
+};
+
+const deleteTask = async task => {
+  const index = tasks.indexOf(task);
+  tasks.splice(index, 1);
+};
+
+const deleteTasksById = async id => {
+  const tasksById = tasks.filter(task => task.boardId === id);
+  tasksById.forEach(task => {
+    const index = tasks.findIndex(el => el.id === task.id);
+    tasks.splice(index, 1);
   });
 };
 
-const deleteTask = async ({ id, boardId }) => {
-  tasks = tasks.filter(task => id !== task.id && boardId !== task.boardId);
-};
-
-const deleteAllTasksByBoardId = async boardId => {
-  console.log('TASK MEM', boardId);
-  tasks = tasks.filter(task => task.boardId !== boardId);
+const unassign = async id => {
+  tasks.forEach(task => {
+    if (task.userId === id) {
+      task.userId = null;
+    }
+  });
 };
 
 module.exports = {
-  getAll,
+  getAllTasksOnBoard,
+  getTaskById,
   createTask,
-  getTask,
   updateTask,
   deleteTask,
-  deleteAllTasksByBoardId
+  deleteTasksById,
+  unassign
 };
