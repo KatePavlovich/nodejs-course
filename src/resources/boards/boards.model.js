@@ -10,11 +10,10 @@ class Board {
 
   static toResponse(board) {
     const { id, title, columns } = board;
-    // const responseColumns = columns.map(Column.toResponse);
     return {
       id,
       title,
-      columns
+      columns: columns.map(Column.toResponse)
     };
   }
 }
