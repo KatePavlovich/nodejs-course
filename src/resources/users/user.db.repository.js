@@ -12,9 +12,7 @@ const getUserById = id => {
 };
 
 const updateUser = async (id, body) => {
-  const user = await getUserById(id);
-  const updatedUser = { ...user.toObject(), ...body };
-  return User.findByIdAndUpdate({ _id: id }, updatedUser);
+  return User.updateOne({ _id: id }, body);
 };
 
 const deleteUser = async userId => {

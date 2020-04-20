@@ -19,9 +19,12 @@ router
   .route('/:boardId')
   .get(async (req, res) => {
     const board = await boardsService.getBoard(req.params.boardId);
-    if (board) {
-      res.send(Board.toResponse(board));
+    if (!board) {
+      return res
+        .status(404)
+        .json({ status: 'error', message: 'Board not found' });
     }
+    res.send(Board.toResponse(board));
   })
   .put(async (req, res) => {
     const updatedBoard = await boardsService.updateBoard(
@@ -33,11 +36,12 @@ router
     }
   })
   .delete(async (req, res) => {
-    const board = await boardsService.getBoard(req.params.boardId);
+    const { boardId } = req.params;
+    const board = await boardsService.getBoard(boardId);
     if (!board) {
       res.status(404).send('Board not found');
     } else {
-      await boardsService.deleteBoard(req.params.boardId);
+      await boardsService.deleteBoard(boardId);
       res.status(204).send('The board has been deleted');
     }
   });
